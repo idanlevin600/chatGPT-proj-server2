@@ -11,10 +11,10 @@ const openai = new OpenAI({
 });
 
 const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: process.env.DB_DATABASE,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    server: process.env.SERVER,
+    database: process.env.DATABASE,
     options: {
         encrypt: true, // Use this if you're on Windows Azure
         enableArithAbort: true,
@@ -30,7 +30,7 @@ const poolPromise = new sql.ConnectionPool(config)
     })
     .catch(err => {
         console.log('Database Connection Failed! Bad Config: ', err);
-        throw err; // Re-throw to stop the server start process
+        throw err; // re-throw to stop the server start process
     });
 
 const app = express();
