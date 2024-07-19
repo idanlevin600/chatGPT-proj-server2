@@ -4,6 +4,7 @@ import cors from "cors";
 import sql from "mssql";
 import { OpenAI } from "openai";
 import dotenv from "dotenv";
+import path from "path"; // Import path module
 dotenv.config();
 
 const openai = new OpenAI({
@@ -26,7 +27,8 @@ const poolPromise = new sql.ConnectionPool(config)
     .connect()
     .then(pool => {
         console.log('Connected to SQL Server');
-        return pool;
+        // Test query to ensure connection
+        return pool.request().query("SELECT 1");
     })
     .catch(err => console.log('Database Connection Failed! Bad Config: ', err));
 
@@ -35,6 +37,14 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
+
+// Serve static files (e.g., favicon)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve favicon
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
 
 app.get("/", (req, res) => {
     res.send("Hello, this is the root of the ChatGPT server.");
@@ -142,7 +152,7 @@ app.get("/api/results", async (req, res) => {
         res.json(result.recordset);
     } catch (error) {
         console.error("Error fetching data:", error);
-        res.status(500).json({ error: "Failed to fetch data" });
+        res.status(500).json({ error: "Failed to fetch data", details: error.message });
     }
 });
 
