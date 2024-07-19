@@ -30,7 +30,7 @@ const poolPromise = new sql.ConnectionPool(config)
     })
     .catch(err => {
         console.log('Database Connection Failed! Bad Config: ', err);
-        throw err; // re-throw to stop the server start process
+        throw err; // Re-throw to stop the server start process
     });
 
 const app = express();
@@ -41,6 +41,17 @@ app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("Hello, this is the root of the ChatGPT server.");
+});
+
+app.get("/test-db-connection", async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        await pool.request().query("SELECT 1");
+        res.json({ success: true, message: "Database connection successful" });
+    } catch (error) {
+        console.error("Database connection test failed:", error);
+        res.status(500).json({ success: false, message: "Database connection failed", error: error.message });
+    }
 });
 
 app.post("/", async (req, res) => {
