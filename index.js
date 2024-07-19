@@ -30,7 +30,7 @@ const poolPromise = new sql.ConnectionPool(config)
     })
     .catch(err => {
         console.log('Database Connection Failed! Bad Config: ', err);
-        throw err; // re-throw to stop the server start process
+        throw err; // Re-throw to stop the server start process
     });
 
 const app = express();
