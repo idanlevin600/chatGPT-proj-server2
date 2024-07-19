@@ -38,13 +38,6 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-// Serve static files (e.g., favicon)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve favicon
-app.get('/favicon.ico', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
-});
 
 app.get("/", (req, res) => {
     res.send("Hello, this is the root of the ChatGPT server.");
