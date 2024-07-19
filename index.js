@@ -4,7 +4,6 @@ import cors from "cors";
 import sql from "mssql";
 import { OpenAI } from "openai";
 import dotenv from "dotenv";
-import path from "path"; // Import path module
 dotenv.config();
 
 const openai = new OpenAI({
@@ -12,10 +11,10 @@ const openai = new OpenAI({
 });
 
 const config = {
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    server: process.env.SERVER,
-    database: process.env.DATABASE,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_DATABASE,
     options: {
         encrypt: true, // Use this if you're on Windows Azure
         enableArithAbort: true,
@@ -27,17 +26,18 @@ const poolPromise = new sql.ConnectionPool(config)
     .connect()
     .then(pool => {
         console.log('Connected to SQL Server');
-        // Test query to ensure connection
-        return pool.request().query("SELECT 1");
+        return pool;
     })
-    .catch(err => console.log('Database Connection Failed! Bad Config: ', err));
+    .catch(err => {
+        console.log('Database Connection Failed! Bad Config: ', err);
+        throw err; // re-throw to stop the server start process
+    });
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
-
 
 app.get("/", (req, res) => {
     res.send("Hello, this is the root of the ChatGPT server.");
